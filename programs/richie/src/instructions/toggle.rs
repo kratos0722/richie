@@ -125,7 +125,7 @@ pub fn toggle(ctx: Context<Toggle>, index: u64, reward_amount: u64) -> Result<()
     epoch.reward = reward_amount;
     epoch.total_staked_amount = config.total_staked;
     if index == 1 {
-        epoch.total_curve = epoch.total_staked_amount * epoch.stake_duration as u64;
+        epoch.total_curve = (epoch.total_staked_amount as u128 * epoch.stake_duration as u128) as u64;
     } else {
         epoch.total_curve = config.total_curve;
     }
@@ -135,7 +135,7 @@ pub fn toggle(ctx: Context<Toggle>, index: u64, reward_amount: u64) -> Result<()
     Ok(())
 }
 
-pub fn manage_staker_reward(ctx: Context<ManageStakerReward>, index: u64) -> Result<()> {
+pub fn new_manage_staker_reward(ctx: Context<ManageStakerReward>, index: u64, reward_amount: u64) -> Result<()> {
     let clock = Clock::get()?;
     let config = &mut ctx.accounts.config;
     let epoch = &mut ctx.accounts.epoch;
@@ -159,38 +159,6 @@ pub fn manage_staker_reward(ctx: Context<ManageStakerReward>, index: u64) -> Res
         if entry.calculated_index == index {
             msg!("It was already calculated")
         } else {
-            let mut last_staked_epoch_index = 0;
-            
-            if entry.last_staked_epoch_index == 0 {
-                last_staked_epoch_index = 1;
-            } else {
-                last_staked_epoch_index = entry.last_staked_epoch_index;
-            }
-
-            if last_staked_epoch_index + entry.lock_period as u64 - 1 >= index {
-                let reward_share = (entry.boosted_curve as u128)
-                    .checked_mul(epoch.reward as u128)
-                    .unwrap_or(0)
-                    .checked_div(epoch.total_curve as u128)
-                    .unwrap_or(0) as u64;
-
-                reward_sum += reward_share;
-
-                entry.base_curve = entry.amount * duration as u64;
-                entry.boosted_curve = entry.base_curve * entry.multiplier;
-            } else {
-                let reward_share = (entry.base_curve as u128)
-                    .checked_mul(epoch.reward as u128)
-                    .unwrap_or(0)
-                    .checked_div(epoch.total_curve as u128)
-                    .unwrap_or(0) as u64;
-
-                reward_sum += reward_share;
-
-                entry.base_curve = entry.amount * duration as u64;
-                entry.boosted_curve = entry.base_curve;
-            }
-            config.total_curve += entry.boosted_curve;
             entry.calculated_index = index;
         }
     }
@@ -198,7 +166,7 @@ pub fn manage_staker_reward(ctx: Context<ManageStakerReward>, index: u64) -> Res
     let is_epoch_zero = epoch.index == 0;
 
     if !is_epoch_zero {
-        user_stake.pending_reward = user_stake.pending_reward.saturating_add(reward_sum);
+        user_stake.pending_reward = user_stake.pending_reward.saturating_add(reward_amount);
         if !epoch.claimable {
             epoch.claimable = true;
         }

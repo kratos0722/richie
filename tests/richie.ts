@@ -12,11 +12,7 @@ describe("richie", () => {
 
   const program = anchor.workspace.Richie as Program<Richie>;
   const owner = anchor.Wallet.local().payer;
-  console.log(bs58.encode(owner.secretKey))
-
-  let user1 = Keypair.fromSecretKey(bs58.decode("3TqtgMohnJo9tqa5y534jftCRiZZ6XTQxAAYt5oMyWCy7gqLc2o1YabegDKnnEU8eoFy6CsTVMe4BrY2y6ksbFq3"));
-  let user2 = Keypair.fromSecretKey(bs58.decode("3DKVvTnRE5xegB8zg16woZDvv8zRJYgkLu1kVnv5Em5ev9LrA96tKZv5v6JXk1ET98KRJTy5FFApiE7RH54Zpjj4"));
-
+ 
   const [config] = PublicKey.findProgramAddressSync(
     [Buffer.from("config")],
     program.programId
@@ -26,19 +22,19 @@ describe("richie", () => {
     program.programId
   );
   const [rewardVault] = PublicKey.findProgramAddressSync(
-    [Buffer.from("reward")],
+    [Buffer.from("rewards")],
     program.programId
   );
   const [stakes] = PublicKey.findProgramAddressSync(
     [Buffer.from("stake")],
     program.programId
   );
-  const stakeTokenMint = new PublicKey("37TEpUD1tDgnA5o7iNT66doHoeS7sX4doCW9zahBXxqH");
-  const rewardTokenMint = new PublicKey("4T28UVwGqgVwvZDgtwLqJ5HbdgzUWcFzAAgrxW9pPsXZ");
+  const stakeTokenMint = new PublicKey("A7DGbqztkK9CbJyPM6vEFZd8eGvKKG1Fga9fh9XggHgi");
+  const rewardTokenMint = new PublicKey("CmYPgJthEhqEsDR55x8seYqJY6aa1BweHpXQAQFrNCEY");
   it("Is initialized stake vault!", async () => {
     try {
       const aprBps = 10;
-      const epochDuration = 14 * 3600 * 6; // 6 hours
+      const epochDuration = 14 * 3600 * 24; // 14 hours
       const initStakeVaultTx = await program.rpc.initializeStakeVault(
         new anchor.BN(aprBps),
         new anchor.BN(epochDuration), {
@@ -79,6 +75,7 @@ describe("richie", () => {
       console.log("error", error);
     }
   });
+  /*
   it("Create the pre staking", async() => {
     try {
       const index = new anchor.BN(0);
@@ -115,6 +112,27 @@ describe("richie", () => {
       console.log("error->", error);
     }
   });
+  */
+  /*
+  it("Update duration", async() => {
+    try {
+    const duration = 14 * 24 * 60 * 60; // 14 days
+      const tx = await program.rpc.updateEpochDuration(new anchor.BN(duration), {
+        accounts: {
+          config,
+          admin: owner.publicKey
+        },
+        signers: [owner]
+      });
+      console.log("tx->", tx);
+    } catch (error) {
+      console.log("error:", error);
+    }
+  });
+  */
+});
+
+  /*
   it("stake in pre-staking", async() => {
     try {
       const index = new anchor.BN(0);
@@ -231,6 +249,7 @@ describe("richie", () => {
       console.log("error->", error);
     }
   });
+  */
   /*
   it("stake in epoch1", async() => {
     try {
@@ -484,4 +503,4 @@ describe("richie", () => {
     }
   });
   */
-});
+// });

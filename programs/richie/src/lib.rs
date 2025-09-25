@@ -9,7 +9,7 @@ pub use constants::*;
 use instructions::*;
 pub use state::*;
 
-declare_id!("GqVdmLTyvsX2h2LDnMVuTNc6MQvzPTzdsTJHjJEEyUMz");
+declare_id!("Dui1sSVYkH7DsppP6b4TAPmJqovNGWf5DxPcmEJMKPLF");
 
 #[program]
 pub mod richie {
@@ -51,11 +51,12 @@ pub mod richie {
         instructions::toggle(ctx, index, reward_amount)
     }
 
-    pub fn manage_staker_reward(
+    pub fn new_manage_staker_reward(
         ctx: Context<ManageStakerReward>,
-        index: u64
+        index: u64,
+        reward_amount: u64
     ) -> Result<()> {
-        instructions::manage_staker_reward(ctx, index)
+        instructions::new_manage_staker_reward(ctx, index, reward_amount)
     }
 
     pub fn stake(

@@ -61,7 +61,7 @@ pub struct InitializeRewardVault<'info> {
     pub reward_vault: Box<Account<'info, TokenAccount>>,
 
     #[account(
-        init,
+        init_if_needed,
         payer = admin,
         seeds = [STAKE.as_bytes()],
         bump,

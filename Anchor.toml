@@ -5,7 +5,7 @@ seeds = false
 skip-lint = false
 
 [programs.devnet]
-richie = "GqVdmLTyvsX2h2LDnMVuTNc6MQvzPTzdsTJHjJEEyUMz"
+richie = "Dui1sSVYkH7DsppP6b4TAPmJqovNGWf5DxPcmEJMKPLF"
 
 [registry]
 url = "https://api.apr.dev"
